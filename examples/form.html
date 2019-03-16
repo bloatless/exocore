@@ -9,21 +9,20 @@
 
 <form id="demo-form">
     <label for="firstname">First name</label>
-    <input id="firstname" type="text" value="">
+    <input id="firstname" type="text" value="" data-ex-bind="value:person.firstname">
 
     <label for="lastname">Last name</label>
-    <input id="lastname" type="text" value="">
+    <input id="lastname" type="text" value="" data-ex-bind="value:person.lastname">
 
-    <button id="reset">Reset</button>
+    <button id="reset">Homer</button>
 </form>
 
 <div>
-    <span id="firstname_out"></span>
-    <span id="lastname_out"></span>
+    <span id="firstname_out" data-ex-bind="innerText:person.firstname"></span>
+    <span id="lastname_out" data-ex-bind="innerText:person.lastname"></span>
 </div>
 
 <script src="../src/exocore.js"></script>
-<script src="./form.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', e => {
 
@@ -31,25 +30,16 @@
             firstname: null,
             lastname: null
         };
+
         ex.introduce('person', person);
-
-        let elFirstname = document.getElementById('firstname');
-        ex.bind(elFirstname, 'person.firstname', 'value', 'keyup');
-
-        let elLastname = document.getElementById('lastname');
-        ex.bind(elLastname, 'person.lastname', 'value', 'keyup');
-
-        let elFirstnameOut = document.getElementById('firstname_out');
-        ex.bind(elFirstnameOut, 'person.firstname', 'innerText');
-
-        let elLastnameOut = document.getElementById('lastname_out');
-        ex.bind(elLastnameOut, 'person.lastname', 'innerText');
 
         document.getElementById('reset').addEventListener('click', evt => {
             evt.preventDefault();
             person.firstname = 'Homer';
             person.lastname = 'Simpson';
         });
+
+        ex.init();
     });
 </script>
 </body>

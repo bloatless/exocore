@@ -57,6 +57,20 @@ class Exocore {
 
         this.bindings[propertyPath].addElementBinding(domElement, attribute, event);
     }
+
+    init(elRoot = document) {
+        let elements = elRoot.querySelectorAll('[data-ex-bind');
+        for (let element of elements) {
+            let [attr, propertyPath] = element.getAttribute('data-ex-bind').split(':');
+            let event = null;
+            switch (element.tagName) {
+                case 'INPUT':
+                    event = 'keyup';
+                    break;
+            }
+            this.bind(element, propertyPath, attr, event);
+        }
+    }
 }
 
 const ex = new Exocore;
