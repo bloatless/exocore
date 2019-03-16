@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exocore | Form</title>
+</head>
+<body>
+
+<form id="demo-form">
+    <label for="firstname">First name</label>
+    <input id="firstname" type="text" value="">
+
+    <label for="lastname">Last name</label>
+    <input id="lastname" type="text" value="">
+
+    <button id="reset">Reset</button>
+</form>
+
+<div>
+    <span id="firstname_out"></span>
+    <span id="lastname_out"></span>
+</div>
+
+<script src="../src/exocore.js"></script>
+<script src="./form.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', e => {
+
+        let person = {
+            firstname: null,
+            lastname: null
+        };
+        ex.introduce('person', person);
+
+        let elFirstname = document.getElementById('firstname');
+        ex.bind(elFirstname, 'person.firstname', 'value', 'keyup');
+
+        let elLastname = document.getElementById('lastname');
+        ex.bind(elLastname, 'person.lastname', 'value', 'keyup');
+
+        let elFirstnameOut = document.getElementById('firstname_out');
+        ex.bind(elFirstnameOut, 'person.firstname', 'innerText');
+
+        let elLastnameOut = document.getElementById('lastname_out');
+        ex.bind(elLastnameOut, 'person.lastname', 'innerText');
+
+        document.getElementById('reset').addEventListener('click', evt => {
+            evt.preventDefault();
+            person.firstname = 'Homer';
+            person.lastname = 'Simpson';
+        });
+    });
+</script>
+</body>
+</html>
