@@ -41,24 +41,30 @@ const Binding = function (obj, prop) {
 
 class Exocore {
     constructor() {
-        this.knownObjects = {};
+        this.knownData = {};
+        this.knownCallbacks = {};
         this.bindings = {};
     }
 
     introduce(name, object) {
-        this.knownObjects[name] = object;
+        if (typeof object === 'function') {
+            this.knownCallbacks[name] = object;
+        } else {
+            this.knownData[name] = object;
+        }
     }
 
     bind(domElement, propertyPath, attribute, event = null) {
         let [objectName, propertyName] = propertyPath.split('.');
         if (!this.bindings[propertyPath]) {
-            this.bindings[propertyPath] = new Binding(this.knownObjects[objectName], propertyName);
+            this.bindings[propertyPath] = new Binding(this.knownData[objectName], propertyName);
         }
 
         this.bindings[propertyPath].addElementBinding(domElement, attribute, event);
     }
 
     init(elRoot = document) {
+        // Handle default bindings
         let elements = elRoot.querySelectorAll('[data-ex-bind');
         for (let element of elements) {
             let [attr, propertyPath] = element.getAttribute('data-ex-bind').split(':');
@@ -69,6 +75,13 @@ class Exocore {
                     break;
             }
             this.bind(element, propertyPath, attr, event);
+        }
+
+        // Handle event bindings
+        elements = elRoot.querySelectorAll('[data-ex-on');
+        for (let element of elements) {
+            let [evtName, callbackName] = element.getAttribute('data-ex-on').split(':');
+            element.addEventListener(evtName, this.knownCallbacks[callbackName]);
         }
     }
 }

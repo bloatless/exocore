@@ -14,7 +14,7 @@
     <label for="lastname">Last name</label>
     <input id="lastname" type="text" value="" data-ex-bind="value:person.lastname">
 
-    <button id="reset">Homer</button>
+    <button id="reset" data-ex-on="click:reset">Homer</button>
 </form>
 
 <div>
@@ -33,7 +33,7 @@
 
         ex.introduce('person', person);
 
-        document.getElementById('reset').addEventListener('click', evt => {
+        ex.introduce('reset', function (evt) {
             evt.preventDefault();
             person.firstname = 'Homer';
             person.lastname = 'Simpson';
