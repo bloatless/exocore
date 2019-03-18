@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exocore | ToDo</title>
+</head>
+<body>
+
+<input type="text" id="todo-in" data-ex-on="keyup:addtodo">
+
+<div id="todo-list">
+    <ul>
+        <li data-ex-for="$todo in todos">
+            <em>{{ $todo.text }}</em>
+        </li>
+    </ul>
+</div>
+
+<table>
+    <tr data-ex-for="$person in persons">
+        <td>{{ $person.firstname}}</td>
+        <td>{{ $person.lastname }}</td>
+    </tr>
+</table>
+
+
+<script src="../src/exocore.js"></script>
+<script src="todo.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', e => {
+        ex.init();
+    });
+</script>
+</body>
+</html>

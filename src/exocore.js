@@ -81,7 +81,36 @@ class Exocore {
         elements = elRoot.querySelectorAll('[data-ex-on');
         for (let element of elements) {
             let [evtName, callbackName] = element.getAttribute('data-ex-on').split(':');
+            if (!this.knownCallbacks[callbackName]) {
+                console.error('Unknown callback');
+                return false;
+            }
             element.addEventListener(evtName, this.knownCallbacks[callbackName]);
+        }
+
+        // Handle template loops
+        elements = elRoot.querySelectorAll('[data-ex-for');
+        for (let element of elements) {
+            let tmp = element.getAttribute('data-ex-for').match(/(\$\w+)\s+in\s+(\w+)/);
+            let dataKey = tmp[2];
+            let dataItemName = tmp[1];
+            if (!this.knownData[dataKey]) {
+                console.error('Unknown data');
+                return false;
+            }
+
+            let elParent = element.parentElement;
+            if (elParent === null) {
+                continue;
+            }
+
+            elParent.innerHTML = '';
+
+            for (let foo of this.knownData[dataKey]) {
+                let elNew = document.createElement(element.tagName);
+                elNew.innerHTML = element.innerHTML;
+                elParent.appendChild(elNew);
+            }
         }
     }
 }
