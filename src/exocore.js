@@ -88,6 +88,26 @@ class Exocore {
             element.addEventListener(evtName, this.knownCallbacks[callbackName]);
         }
 
+        // Handle text bindings
+        for (let dataKey in this.knownData) {
+
+        }
+
+        let textNodeWalker = document.createTreeWalker(
+            elRoot,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode: function(node) {
+                    return (node.textContent.match(/{{\s?\$[\w.-]+\s?}}/) !== null);
+                }
+            }
+        );
+        while (textNodeWalker.nextNode()) {
+            let textNode = textNodeWalker.currentNode;
+            console.log(textNode);
+        }
+
+
         // Handle template loops
         elements = elRoot.querySelectorAll('[data-ex-for');
         for (let element of elements) {

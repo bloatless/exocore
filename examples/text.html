@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exocore | Text</title>
+</head>
+<body>
+
+<p>
+    Hello my name is
+    <span data-ex-bind="innerText:person.firstname"></span>
+    <span data-ex-bind="innerText:person.lastname"></span>
+</p>
+
+<div>
+<p>
+    Hello my name is {{ $person.firstname }} <strong>{{ $person.lastname }}</strong>.
+</p>
+</div>
+
+
+<script src="../src/exocore.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', e => {
+
+        ex.introduce('hello', 'Hello World');
+
+        let person = {
+            firstname: 'Homer',
+            lastname: 'Simpson'
+        };
+
+        ex.introduce('person', person);
+
+        ex.introduce('change', function (evt) {
+            evt.preventDefault();
+            person.firstname = 'John';
+            person.lastname = 'Doe';
+        });
+
+        ex.init();
+    });
+</script>
+</body>
+</html>
