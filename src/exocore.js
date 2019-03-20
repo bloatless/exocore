@@ -54,6 +54,12 @@ class Exocore {
         }
     }
 
+    getData(path) {
+        return path.split('.').reduce((prev, curr) => {
+            return prev ? prev[curr] : null
+        }, this.knownData || self);
+    }
+
     bind(domElement, propertyPath, attribute, event = null) {
         let [objectName, propertyName] = propertyPath.split('.');
         if (!this.bindings[propertyPath]) {
@@ -89,10 +95,6 @@ class Exocore {
         }
 
         // Handle text bindings
-        for (let dataKey in this.knownData) {
-
-        }
-
         let textNodeWalker = document.createTreeWalker(
             elRoot,
             NodeFilter.SHOW_TEXT,
@@ -104,7 +106,9 @@ class Exocore {
         );
         while (textNodeWalker.nextNode()) {
             let textNode = textNodeWalker.currentNode;
-            console.log(textNode);
+            let match = textNode.textContent.match(/{{\s?\$([\w.-]+)\s?}}/);
+            let text = this.getData(match[1]);
+            textNode.textContent = textNode.textContent.replace(match[0], text);
         }
 
 

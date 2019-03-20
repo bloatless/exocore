@@ -7,17 +7,14 @@
 </head>
 <body>
 
-<p>
-    Hello my name is
-    <span data-ex-bind="innerText:person.firstname"></span>
-    <span data-ex-bind="innerText:person.lastname"></span>
-</p>
-
 <div>
-<p>
-    Hello my name is {{ $person.firstname }} <strong>{{ $person.lastname }}</strong>.
-</p>
+    <p>
+        Hello my name is {{ $person.firstname }} <strong>{{ $person.lastname }}</strong>.
+    </p>
+    <p>{{ $person.address.city }}</p>
 </div>
+
+<h3>{{ $hello }}</h3>
 
 
 <script src="../src/exocore.js"></script>
@@ -28,7 +25,10 @@
 
         let person = {
             firstname: 'Homer',
-            lastname: 'Simpson'
+            lastname: 'Simpson',
+            address: {
+                city: 'Springfield'
+            }
         };
 
         ex.introduce('person', person);
