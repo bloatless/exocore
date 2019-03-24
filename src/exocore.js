@@ -1,71 +1,27 @@
-
-const Binding = function (obj, prop) {
-    let _this = this;
-    this.currentValue = obj[prop] || null;
-    this.elementBindings = [];
-
-    this.valueGetter = () => {
-        return _this.currentValue;
-    };
-
-    this.valueSetter = value => {
-        _this.currentValue = value;
-        for (let binding of _this.elementBindings) {
-            binding.element[binding.attribute] = value;
-        }
-    };
-
-    this.addElementBinding = (el, attr, event = null) => {
-        let binding = {
-            element: el,
-            attribute: attr,
-            event: null
-        };
-        if (event !== null) {
-            el.addEventListener(event, event => {
-                _this.valueSetter(el[attr]);
-            });
-            binding.event = event;
-        }
-        this.elementBindings.push(binding);
-        el[attr] = _this.currentValue;
-
-        return _this;
-    };
-
-    Object.defineProperty(obj, prop, {
-        get: this.valueGetter,
-        set: this.valueSetter
-    });
-};
+import {PropertyObserver} from "./observer.js";
+import {DataContainer, CallbackContainer} from "./container.js";
 
 class Exocore {
     constructor() {
-        this.knownData = {};
-        this.knownCallbacks = {};
+        this.dataContainer = new DataContainer;
+        this.callbackContainer = new CallbackContainer;
         this.bindings = {};
     }
 
-    introduce(name, object) {
-        if (typeof object === 'function') {
-            this.knownCallbacks[name] = object;
+    introduce(key, item) {
+        if (typeof item === 'function') {
+            this.callbackContainer.add(key, item);
         } else {
-            this.knownData[name] = object;
+            this.dataContainer.add(key, item);
         }
-    }
-
-    getData(path) {
-        return path.split('.').reduce((prev, curr) => {
-            return prev ? prev[curr] : null
-        }, this.knownData || self);
     }
 
     bind(domElement, propertyPath, attribute, event = null) {
-        let [objectName, propertyName] = propertyPath.split('.');
+        let objectKey = propertyPath.substr(0, propertyPath.lastIndexOf('.'));
+        let propertyName = propertyPath.substr(propertyPath.lastIndexOf('.') + 1);
         if (!this.bindings[propertyPath]) {
-            this.bindings[propertyPath] = new Binding(this.knownData[objectName], propertyName);
+            this.bindings[propertyPath] = new PropertyObserver(this.dataContainer.get(objectKey), propertyName);
         }
-
         this.bindings[propertyPath].addElementBinding(domElement, attribute, event);
     }
 
@@ -87,11 +43,11 @@ class Exocore {
         elements = elRoot.querySelectorAll('[data-ex-on');
         for (let element of elements) {
             let [evtName, callbackName] = element.getAttribute('data-ex-on').split(':');
-            if (!this.knownCallbacks[callbackName]) {
+            if (!this.callbackContainer.has(callbackName)) {
                 console.error('Unknown callback');
                 return false;
             }
-            element.addEventListener(evtName, this.knownCallbacks[callbackName]);
+            element.addEventListener(evtName, this.callbackContainer.get(callbackName));
         }
 
         // Handle text bindings
@@ -139,4 +95,4 @@ class Exocore {
     }
 }
 
-const ex = new Exocore;
+export default Exocore;

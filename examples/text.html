@@ -7,6 +7,8 @@
 </head>
 <body>
 
+<span data-ex-bind="innerText:person.firstname"></span>
+
 <div>
     <p>
         Hello my name is {{ $person.firstname }} <strong>{{ $person.lastname }}</strong>.
@@ -15,6 +17,8 @@
 </div>
 
 <h3>{{ $hello }}</h3>
+
+<button data-ex-on="click:change">Change</button>
 
 
 <script src="../src/exocore.js"></script>
