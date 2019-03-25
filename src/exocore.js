@@ -74,7 +74,7 @@ class Exocore {
             let tmp = element.getAttribute('data-ex-for').match(/(\$\w+)\s+in\s+(\w+)/);
             let dataKey = tmp[2];
             let dataItemName = tmp[1];
-            if (!this.knownData[dataKey]) {
+            if (!this.dataContainer.has(dataKey)) {
                 console.error('Unknown data');
                 return false;
             }
@@ -86,7 +86,7 @@ class Exocore {
 
             elParent.innerHTML = '';
 
-            for (let foo of this.knownData[dataKey]) {
+            for (let foo of this.dataContainer.get(dataKey)) {
                 let elNew = document.createElement(element.tagName);
                 elNew.innerHTML = element.innerHTML;
                 elParent.appendChild(elNew);

@@ -12,6 +12,17 @@ export class DataContainer {
             return prev ? prev[curr] : null
         }, this.items || self);
     }
+
+    has(key) {
+        let items = this.items;
+        return key.split(".").every(x => {
+            if (typeof items != "object" || items === null || ! x in items) {
+                return false;
+            }
+            items = items[x];
+            return true;
+        });
+    }
 }
 
 export class CallbackContainer {
