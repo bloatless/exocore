@@ -1,13 +1,35 @@
-import {PropertyObserver} from "./observer.js";
-import {DataContainer, CallbackContainer} from "./container.js";
+import {Bindings} from "./bindings.js";
+import {EventDispatcher} from "./dispatcher.js";
+import {Observer} from "./observer.js";
 
 class Exocore {
     constructor() {
-        this.dataContainer = new DataContainer;
-        this.callbackContainer = new CallbackContainer;
-        this.bindings = {};
+        let eventDispatcher = new EventDispatcher;
+        Observer.setEventDispatcher(eventDispatcher);
+        this.ds = Observer.create({});
+        this.bindings = new Bindings(eventDispatcher, this.ds);
     }
 
+    init(elRoot = document) {
+
+        let elements = elRoot.querySelectorAll('[data-ex-bind');
+        for (let element of elements) {
+            let propPath = element.getAttribute('data-ex-bind');
+
+            switch (element.tagName) {
+                case 'INPUT':
+                case 'TEXTAREA':
+                case 'SELECT':
+                    this.bindings.addFormBinding(propPath, element);
+                    break;
+                default:
+                    this.bindings.addDefaultBinding(propPath, element);
+                    break;
+            }
+        }
+    }
+
+    /*
     introduce(key, item) {
         if (typeof item === 'function') {
             this.callbackContainer.add(key, item);
@@ -15,6 +37,7 @@ class Exocore {
             this.dataContainer.add(key, item);
         }
     }
+
 
     bind(domElement, propertyPath, attribute, event = null) {
         let objectKey = propertyPath.substr(0, propertyPath.lastIndexOf('.'));
@@ -26,10 +49,17 @@ class Exocore {
     }
 
     init(elRoot = document) {
+
         // Handle default bindings
         let elements = elRoot.querySelectorAll('[data-ex-bind');
         for (let element of elements) {
-            let [attr, propertyPath] = element.getAttribute('data-ex-bind').split(':');
+            let dataValue = element.getAttribute('data-ex-bind');
+            let attr = 'innerText';
+            let propertyPath = dataValue;
+            if (dataValue.indexOf(':') > 0) {
+                [attr, propertyPath] = dataValue.split(':');
+            }
+
             let event = null;
             switch (element.tagName) {
                 case 'INPUT':
@@ -92,7 +122,9 @@ class Exocore {
                 elParent.appendChild(elNew);
             }
         }
+
     }
+    */
 }
 
 export default Exocore;
