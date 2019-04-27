@@ -1,6 +1,5 @@
 export class Bindings {
     constructor(eventDispatcher, ds) {
-        this.eventDispatcher = eventDispatcher;
         this.ds = ds;
         this.bindings = {};
 
@@ -40,7 +39,6 @@ export class Bindings {
     }
 
     update(propPath, propValue) {
-
         let pathItems = propPath.split('.');
         let pathBindings = this._getBindings(this.bindings, pathItems);
         if (pathBindings === null) {
@@ -82,17 +80,51 @@ export class Bindings {
     }
 
     _updateBindings(pathBindings, propValue) {
-
-        // @todo Compare object properies and bindings
-
-        // update binding
-        for (let binding of pathBindings.bindings) {
-            if (binding.type === 'simple') {
-                binding.el.innerText = propValue;
-            } else if (binding.type === 'form') {
-                binding.el.value = propValue;
+        if (pathBindings.bindings.length > 0) {
+            // set value to bindings
+            for (let binding of pathBindings.bindings) {
+                if (binding.type === 'simple') {
+                    binding.el.innerText = propValue;
+                } else if (binding.type === 'form') {
+                    binding.el.value = propValue;
+                }
             }
         }
 
+        if (pathBindings.children === null) {
+            return;
+        }
+
+        for (let childPath in pathBindings.children) {
+            if (!pathBindings.children.hasOwnProperty(childPath)) {
+                continue;
+            }
+
+            if (propValue.hasOwnProperty(childPath)) {
+                this._updateBindings(pathBindings.children[childPath], propValue[childPath]);
+            } else {
+                this._updateUndefinedBindings(pathBindings.children[childPath]);
+            }
+        }
+    }
+
+    _updateUndefinedBindings(pathBindings) {
+        if (pathBindings.bindings.length > 0) {
+            // set value to bindings
+            for (let binding of pathBindings.bindings) {
+                if (binding.type === 'simple') {
+                    binding.el.innerText = undefined;
+                } else if (binding.type === 'form') {
+                    binding.el.value = undefined;
+                }
+            }
+        }
+
+        for (let childPath in pathBindings.children) {
+            if (!pathBindings.children.hasOwnProperty(childPath)) {
+                continue;
+            }
+            this._updateUndefinedBindings(pathBindings.children[childPath]);
+        }
     }
 }

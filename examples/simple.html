@@ -17,6 +17,8 @@ Person Name:
 <script>
     document.addEventListener('DOMContentLoaded', e => {
 
+        ex.init();
+
         ex.ds.person = {
             name: 'Homer Simpson',
             address: {
@@ -24,14 +26,16 @@ Person Name:
             }
         };
 
-        ex.init();
+
 
 
 
         ex.ds.person = {
-            name: 'Marge Simpson'
-        }
-
+            name: 'Peter Griffin',
+            address: {
+                city: 'Quahog'
+            }
+        };
 
 
     });
